@@ -17,7 +17,7 @@ package object wfc {
   val LEFT = 2
   val RIGHT = 3
   val UP = 4
-  val dimensions = 2
+  val dimensions = 4
   val tiles: List[TextureWrapper] = List(Wfc.Blank, Wfc.Down, Wfc.Left, Wfc.Right, Wfc.Up)
   def d(die: Int): Int = Random.nextInt(die) + 1
   def d(nOd: Int, die: Int): Int = {

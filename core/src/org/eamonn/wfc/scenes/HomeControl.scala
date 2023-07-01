@@ -1,6 +1,7 @@
 package org.eamonn.wfc
 package scenes
 
+import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
 
 class HomeControl(home: Home) extends InputAdapter {
@@ -18,8 +19,10 @@ class HomeControl(home: Home) extends InputAdapter {
     true
   }
 
-  override def keyDown(keycode: Int): Boolean = {
-
+  override def keyUp(keycode: Int): Boolean = {
+      if(keycode == Keys.SPACE){
+        home.collapseLeast()
+      }
     true
   }
 }

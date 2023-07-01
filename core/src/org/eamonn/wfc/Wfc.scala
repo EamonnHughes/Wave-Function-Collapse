@@ -28,6 +28,7 @@ class Wfc extends ApplicationAdapter {
     Wfc.Left = TextureWrapper.load("left.png")
     Wfc.Right = TextureWrapper.load("right.png")
     Wfc.Up = TextureWrapper.load("up.png")
+    Wfc.unChosen = TextureWrapper.load("Square.png")
 
 
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
@@ -65,6 +66,7 @@ object Wfc {
 
   var sound: Sound = _
   var Blank: TextureWrapper = _
+  var unChosen: TextureWrapper = _
   var Down: TextureWrapper = _
   var Up: TextureWrapper = _
   var Left: TextureWrapper = _

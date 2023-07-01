@@ -16,14 +16,19 @@ class Wfc extends ApplicationAdapter {
   private var batch: PolygonSpriteBatch = _
   private var scene: Scene = _
 
+
   override def create(): Unit = {
 
     Gdx.input.setCatchKey(Input.Keys.BACK, true)
 
     batch = garbage.add(new PolygonSpriteBatch())
 
-    Wfc.Square = TextureWrapper.load("Square.png")
-    Wfc.Circle = TextureWrapper.load("Circle.png")
+    Wfc.Blank = TextureWrapper.load("blank.png")
+    Wfc.Down = TextureWrapper.load("down.png")
+    Wfc.Left = TextureWrapper.load("left.png")
+    Wfc.Right = TextureWrapper.load("right.png")
+    Wfc.Up = TextureWrapper.load("up.png")
+
 
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
 
@@ -58,10 +63,12 @@ class Wfc extends ApplicationAdapter {
 object Wfc {
   implicit val garbage: GarbageCan = new GarbageCan
 
-  def screenUnit = (Geometry.ScreenWidth min Geometry.ScreenHeight) / 40
   var sound: Sound = _
-  var Square: TextureWrapper = _
-  var Circle: TextureWrapper = _
+  var Blank: TextureWrapper = _
+  var Down: TextureWrapper = _
+  var Up: TextureWrapper = _
+  var Left: TextureWrapper = _
+  var Right: TextureWrapper = _
 
   def mobile: Boolean = isMobile(Gdx.app.getType)
 

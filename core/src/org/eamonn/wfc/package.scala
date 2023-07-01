@@ -3,6 +3,7 @@ package org.eamonn
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input.Peripheral
 import com.badlogic.gdx.graphics.Color
+import org.eamonn.wfc.util.TextureWrapper
 
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
@@ -10,6 +11,14 @@ import scala.util.Random
 
 // Things kinda stolen from scaloi
 package object wfc {
+
+  val BLANK = 0
+  val DOWN = 1
+  val LEFT = 2
+  val RIGHT = 3
+  val UP = 4
+  val dimensions = 2
+  val tiles: List[TextureWrapper] = List(Wfc.Blank, Wfc.Down, Wfc.Left, Wfc.Right, Wfc.Up)
   def d(die: Int): Int = Random.nextInt(die) + 1
   def d(nOd: Int, die: Int): Int = {
     var amt = 0
@@ -17,7 +26,7 @@ package object wfc {
     amt
   }
 
-  def screenUnit: Float = (Geometry.ScreenWidth min Geometry.ScreenHeight) / 40
+  def screenUnit: Float = (Geometry.ScreenWidth) / dimensions
 
   def compassAvailable: Boolean =
     input.isPeripheralAvailable(Peripheral.Compass)

@@ -21,6 +21,7 @@ class Home extends Scene {
   }
 
   override def update(delta: Float): Option[Scene] = {
+    collapseLeast()
     None
   }
 
@@ -91,8 +92,10 @@ class Home extends Scene {
             )
 
           }
-          nextGrid(index).options = availOptions
-
+          if(availOptions.nonEmpty) {
+            nextGrid(index).options = availOptions
+            if (availOptions.length == 1) nextGrid(index).collapsed = true
+          }
         }
       }
     }

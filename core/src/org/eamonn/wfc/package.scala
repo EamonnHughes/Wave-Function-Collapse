@@ -18,7 +18,7 @@ package object wfc {
   val LEFT = 2
   val RIGHT = 3
   val UP = 4
-  val dimensions = 4
+  val dimensions = 32
   val blankTile = tileType(
     down = 0,
     left = 0,

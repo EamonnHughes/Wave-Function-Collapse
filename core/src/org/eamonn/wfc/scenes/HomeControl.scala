@@ -20,9 +20,7 @@ class HomeControl(home: Home) extends InputAdapter {
   }
 
   override def keyUp(keycode: Int): Boolean = {
-      if(keycode == Keys.SPACE){
-        home.collapseLeast()
-      }
+
     true
   }
 }

@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import org.eamonn.wfc.Scene
+import org.eamonn.wfc.util.TextureWrapper
 
 import scala.util.Random
 
@@ -37,6 +38,26 @@ class Home extends Scene {
       picked.options = List(
         picked.options(Random.nextInt(picked.options.length))
       )
+
+      var nextGrid: Array[gridItem] = Array.fill(dimensions * dimensions)(
+        gridItem(collapsed = false, List(BLANK, DOWN, LEFT, RIGHT, UP))
+      )
+      for (x <- 0 until dimensions) {
+        for (y <- 0 until dimensions) {
+          var index = x + y * dimensions
+          if (grid(index).collapsed) {
+            nextGrid(index) = grid(index)
+          } else {
+            var options: List[Int] = List.empty
+
+            //look down
+
+            //look left
+            //look right
+            //look up
+          }
+        }
+      }
     }
   }
 
@@ -48,7 +69,7 @@ class Home extends Scene {
         if (cell.collapsed) {
           var index = cell.options.head
           batch.draw(
-            tiles(index),
+            tiles(index).texture,
             x * screenUnit,
             y * screenUnit,
             screenUnit,
@@ -71,4 +92,12 @@ class Home extends Scene {
 case class gridItem(
     var collapsed: Boolean = false,
     var options: List[Int] = List(BLANK, DOWN, LEFT, RIGHT, UP)
+)
+
+case class tileType(
+    var downAvailable: List[Int],
+    var leftAvailable: List[Int],
+    var rightAvailable: List[Int],
+    var upAvailable: List[Int],
+    var texture: TextureWrapper
 )

@@ -3,6 +3,7 @@ package org.eamonn
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input.Peripheral
 import com.badlogic.gdx.graphics.Color
+import org.eamonn.wfc.scenes.tileType
 import org.eamonn.wfc.util.TextureWrapper
 
 import java.util.concurrent.TimeUnit
@@ -18,7 +19,49 @@ package object wfc {
   val RIGHT = 3
   val UP = 4
   val dimensions = 4
-  val tiles: List[TextureWrapper] = List(Wfc.Blank, Wfc.Down, Wfc.Left, Wfc.Right, Wfc.Up)
+  val tiles: List[tileType] = List(blankTile, downTile, leftTile, rightTile, upTile)
+
+  val blankTile = tileType(
+    downAvailable = List(0, 1),
+    leftAvailable = List(0, 2),
+    rightAvailable = List(0, 3),
+    upAvailable = List(0, 4),
+    texture = Wfc.Blank
+  )
+
+  val downTile = tileType(
+    downAvailable = List(2, 3, 4),
+    leftAvailable = List(1, 3, 4),
+    rightAvailable = List(1, 2, 4),
+    upAvailable = List(0, 4),
+    texture = Wfc.Down
+  )
+
+  val leftTile = tileType(
+    downAvailable = List(2, 3, 4),
+    leftAvailable = List(1, 3, 4),
+    rightAvailable = List(0, 3),
+    upAvailable = List(1, 2, 3),
+    texture = Wfc.Left
+  )
+
+  val rightTile = tileType(
+    downAvailable = List(2, 3, 4),
+    leftAvailable = List(0, 2),
+    rightAvailable = List(1, 2, 4),
+    upAvailable = List(1, 2, 3),
+    texture = Wfc.Right
+  )
+
+  val upTile = tileType(
+    downAvailable = List(0, 1),
+    leftAvailable = List(1, 3, 4),
+    rightAvailable = List(1, 2, 4),
+    upAvailable = List(1, 2, 3),
+    texture = Wfc.Up
+  )
+
+
   def d(die: Int): Int = Random.nextInt(die) + 1
   def d(nOd: Int, die: Int): Int = {
     var amt = 0

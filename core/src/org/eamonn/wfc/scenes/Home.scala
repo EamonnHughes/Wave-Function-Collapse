@@ -39,26 +39,64 @@ class Home extends Scene {
         picked.options(Random.nextInt(picked.options.length))
       )
 
-      var nextGrid: Array[gridItem] = Array.fill(dimensions * dimensions)(
-        gridItem(collapsed = false, List(BLANK, DOWN, LEFT, RIGHT, UP))
-      )
-      for (x <- 0 until dimensions) {
-        for (y <- 0 until dimensions) {
-          var index = x + y * dimensions
-          if (grid(index).collapsed) {
-            nextGrid(index) = grid(index)
-          } else {
-            var options: List[Int] = List.empty
+      grid = generateNewGrid()
+    }
+  }
 
-            //look down
+  def generateNewGrid(): Array[gridItem] = {
+    var nextGrid: Array[gridItem] = grid.clone()
+    for (x <- 0 until dimensions) {
+      for (y <- 0 until dimensions) {
+        var index = x + y * dimensions
+        if (grid(index).collapsed) {
+          nextGrid(index) = grid(index)
+        } else {
+          var availOptions = grid(index).options
 
-            //look left
-            //look right
-            //look up
+          //look down
+          if (y > 0) {
+            var downTile = nextGrid(index - dimensions)
+            availOptions = availOptions.filter(optionAvailable =>
+              downTile.options.exists(optionDown =>
+                tiles(optionDown).up == tiles(optionAvailable).down
+              )
+            )
           }
+          //look left
+          if (x > 0) {
+            var leftTile = nextGrid(index - 1)
+            availOptions = availOptions.filter(optionAvailable =>
+              leftTile.options.exists(optionLeft =>
+                tiles(optionLeft).right == tiles(optionAvailable).left
+              )
+            )
+          }
+          //look right
+          if (x < dimensions - 1) {
+            var rightTile = nextGrid(index + 1)
+            availOptions = availOptions.filter(optionAvailable =>
+              rightTile.options.exists(optionRight =>
+                tiles(optionRight).left == tiles(optionAvailable).right
+              )
+            )
+
+          }
+          //look up
+          if (y < dimensions - 1) {
+            var upTile = nextGrid(index + dimensions)
+            availOptions = availOptions.filter(optionAvailable =>
+              upTile.options.exists(optionUp =>
+                tiles(optionUp).down == tiles(optionAvailable).up
+              )
+            )
+
+          }
+          nextGrid(index).options = availOptions
+
         }
       }
     }
+    return nextGrid
   }
 
   override def render(batch: PolygonSpriteBatch): Unit = {
@@ -76,6 +114,7 @@ class Home extends Scene {
             screenUnit
           )
         } else {
+          batch.setColor(Color.GRAY)
           batch.draw(
             Wfc.unChosen,
             x * screenUnit,
@@ -95,9 +134,9 @@ case class gridItem(
 )
 
 case class tileType(
-    var downAvailable: List[Int],
-    var leftAvailable: List[Int],
-    var rightAvailable: List[Int],
-    var upAvailable: List[Int],
+    var down: Int,
+    var left: Int,
+    var right: Int,
+    var up: Int,
     var texture: TextureWrapper
 )

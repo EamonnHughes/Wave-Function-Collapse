@@ -19,47 +19,42 @@ package object wfc {
   val RIGHT = 3
   val UP = 4
   val dimensions = 4
-  val tiles: List[tileType] = List(blankTile, downTile, leftTile, rightTile, upTile)
-
   val blankTile = tileType(
-    downAvailable = List(0, 1),
-    leftAvailable = List(0, 2),
-    rightAvailable = List(0, 3),
-    upAvailable = List(0, 4),
+    down = 0,
+    left = 0,
+    right = 0,
+    up = 0,
     texture = Wfc.Blank
   )
-
   val downTile = tileType(
-    downAvailable = List(2, 3, 4),
-    leftAvailable = List(1, 3, 4),
-    rightAvailable = List(1, 2, 4),
-    upAvailable = List(0, 4),
+    down = 1,
+    left = 1,
+    right = 1,
+    up = 0,
     texture = Wfc.Down
   )
-
   val leftTile = tileType(
-    downAvailable = List(2, 3, 4),
-    leftAvailable = List(1, 3, 4),
-    rightAvailable = List(0, 3),
-    upAvailable = List(1, 2, 3),
+    down = 1,
+    left = 1,
+    right = 0,
+    up = 1,
     texture = Wfc.Left
   )
-
   val rightTile = tileType(
-    downAvailable = List(2, 3, 4),
-    leftAvailable = List(0, 2),
-    rightAvailable = List(1, 2, 4),
-    upAvailable = List(1, 2, 3),
+    down = 1,
+    left = 0,
+    right = 1,
+    up = 1,
     texture = Wfc.Right
   )
-
   val upTile = tileType(
-    downAvailable = List(0, 1),
-    leftAvailable = List(1, 3, 4),
-    rightAvailable = List(1, 2, 4),
-    upAvailable = List(1, 2, 3),
+    down = 0,
+    left = 1,
+    right = 1,
+    up = 1,
     texture = Wfc.Up
   )
+  val tiles: List[tileType] = List(blankTile, downTile, leftTile, rightTile, upTile)
 
 
   def d(die: Int): Int = Random.nextInt(die) + 1

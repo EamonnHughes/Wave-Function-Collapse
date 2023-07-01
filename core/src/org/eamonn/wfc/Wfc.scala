@@ -16,20 +16,19 @@ class Wfc extends ApplicationAdapter {
   private var batch: PolygonSpriteBatch = _
   private var scene: Scene = _
 
-
   override def create(): Unit = {
 
     Gdx.input.setCatchKey(Input.Keys.BACK, true)
 
     batch = garbage.add(new PolygonSpriteBatch())
 
-    Wfc.Blank = TextureWrapper.load("blank.png")
-    Wfc.Down = TextureWrapper.load("down.png")
-    Wfc.Left = TextureWrapper.load("left.png")
-    Wfc.Right = TextureWrapper.load("right.png")
-    Wfc.Up = TextureWrapper.load("up.png")
+    Wfc.zero = TextureWrapper.load("0.png")
+    Wfc.one = TextureWrapper.load("1.png")
+    Wfc.two = TextureWrapper.load("2.png")
+    Wfc.three = TextureWrapper.load("3.png")
+    Wfc.four = TextureWrapper.load("4.png")
+    Wfc.five = TextureWrapper.load("5.png")
     Wfc.unChosen = TextureWrapper.load("Square.png")
-
 
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
 
@@ -50,13 +49,13 @@ class Wfc extends ApplicationAdapter {
     batch.end()
   }
 
-  override def dispose(): Unit = {
-    garbage.dispose()
-  }
-
   private def setScene(newScene: Scene): Unit = {
     scene = newScene
     Gdx.input.setInputProcessor(scene.init())
+  }
+
+  override def dispose(): Unit = {
+    garbage.dispose()
   }
 
 }
@@ -65,12 +64,13 @@ object Wfc {
   implicit val garbage: GarbageCan = new GarbageCan
 
   var sound: Sound = _
-  var Blank: TextureWrapper = _
+  var zero: TextureWrapper = _
   var unChosen: TextureWrapper = _
-  var Down: TextureWrapper = _
-  var Up: TextureWrapper = _
-  var Left: TextureWrapper = _
-  var Right: TextureWrapper = _
+  var one: TextureWrapper = _
+  var two: TextureWrapper = _
+  var three: TextureWrapper = _
+  var four: TextureWrapper = _
+  var five: TextureWrapper = _
 
   def mobile: Boolean = isMobile(Gdx.app.getType)
 

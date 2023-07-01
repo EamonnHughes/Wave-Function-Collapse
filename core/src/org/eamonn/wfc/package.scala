@@ -19,45 +19,81 @@ package object wfc {
   val RIGHT = 3
   val UP = 4
   val dimensions = 32
-  val blankTile = tileType(
-    down = 0,
-    left = 0,
-    right = 0,
-    up = 0,
-    texture = Wfc.Blank
+  val zero = tileType(
+    down = "000000000",
+    left = "000000000",
+    right = "000000000",
+    up = "000000000",
+    texture = Wfc.zero
   )
-  val downTile = tileType(
-    down = 1,
-    left = 1,
-    right = 1,
-    up = 0,
-    texture = Wfc.Down
+  val one = tileType(
+    down = "000010000",
+    left = "000000000",
+    right = "000000000",
+    up = "000010000",
+    texture = Wfc.one
   )
-  val leftTile = tileType(
-    down = 1,
-    left = 1,
-    right = 0,
-    up = 1,
-    texture = Wfc.Left
+  val two = tileType(
+    down = "000010000",
+    left = "000000000",
+    right = "000010000",
+    up = "000010000",
+    texture = Wfc.two
   )
-  val rightTile = tileType(
-    down = 1,
-    left = 0,
-    right = 1,
-    up = 1,
-    texture = Wfc.Right
+  val three = tileType(
+    down = "000010000",
+    left = "000010000",
+    right = "000010000",
+    up = "000010000",
+    texture = Wfc.three
   )
-  val upTile = tileType(
-    down = 0,
-    left = 1,
-    right = 1,
-    up = 1,
-    texture = Wfc.Up
+  val four = tileType(
+    down = "000010000",
+    left = "000000000",
+    right = "000000000",
+    up = "000000000",
+    texture = Wfc.four
   )
-  val tiles: List[tileType] = List(blankTile, downTile, leftTile, rightTile, upTile)
+  val five = tileType(
+    down = "000010000",
+    left = "000000000",
+    right = "000010000",
+    up = "000000000",
+    texture = Wfc.five
+  )
+  val tiles: List[tileType] =
+    List(
+      zero,
+      one,
+      two,
+      three,
+      four,
+      five,
+      one.rotateTile(1),
+      one.rotateTile(2),
+      one.rotateTile(3),
+      two.rotateTile(1),
+      two.rotateTile(2),
+      two.rotateTile(3),
+      four.rotateTile(1),
+      four.rotateTile(2),
+      four.rotateTile(3),
+      five.rotateTile(1),
+      five.rotateTile(2),
+      five.rotateTile(3)
+    )
 
+  def getAllTileNumbers(): List[Int] = {
+    var tileNums = List.empty[Int]
+    for(i <- 0 until tiles.length){
+      tileNums = i :: tileNums
+    }
+    return tileNums
+  }
+  val CenterAlign = 1
 
   def d(die: Int): Int = Random.nextInt(die) + 1
+
   def d(nOd: Int, die: Int): Int = {
     var amt = 0
     for (i <- 0 until (nOd)) { amt += Random.nextInt(die) + 1 }
@@ -65,9 +101,6 @@ package object wfc {
   }
 
   def screenUnit: Float = (Geometry.ScreenWidth) / dimensions
-
-  def compassAvailable: Boolean =
-    input.isPeripheralAvailable(Peripheral.Compass)
 
   implicit class AnyOps(val self: Any) extends AnyVal {
 
@@ -99,12 +132,6 @@ package object wfc {
   }
 
   implicit class FiniteDurationOps(val self: FiniteDuration) extends AnyVal {
-    def toFiniteDuration(tu: TimeUnit): FiniteDuration =
-      FiniteDuration(self.toUnit(tu).toLong, tu)
-
-    protected def largestUnit: Option[TimeUnit] =
-      TimeUnit.values.findLast(u => self.toUnit(u) >= 1.0)
-
     def toHumanString: String = {
       largestUnit.fold("no time at all") { u =>
         val scaled = toFiniteDuration(u)
@@ -118,6 +145,12 @@ package object wfc {
           scaled.toString
       }
     }
+
+    def toFiniteDuration(tu: TimeUnit): FiniteDuration =
+      FiniteDuration(self.toUnit(tu).toLong, tu)
+
+    protected def largestUnit: Option[TimeUnit] =
+      TimeUnit.values.findLast(u => self.toUnit(u) >= 1.0)
   }
 
   implicit class OptionOps[A](val self: Option[A]) extends AnyVal {
@@ -127,13 +160,12 @@ package object wfc {
       self.fold(false)(Booleate.unvalue)
   }
 
+  def compassAvailable: Boolean =
+    input.isPeripheralAvailable(Peripheral.Compass)
+
   private trait Booleate[A] {
     def value(a: A): Boolean
     final def unvalue(a: A): Boolean = !value(a)
-  }
-
-  private object Booleate {
-    implicit def booleate: Booleate[Boolean] = b => b
   }
 
   implicit class ColorOps(val self: Color) extends AnyVal {
@@ -151,5 +183,7 @@ package object wfc {
       new Color(self.r, self.g, self.b, self.a * alpha * alpha)
   }
 
-  val CenterAlign = 1
+  private object Booleate {
+    implicit def booleate: Booleate[Boolean] = b => b
+  }
 }

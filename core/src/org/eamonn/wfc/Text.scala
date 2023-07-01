@@ -3,15 +3,15 @@ package org.eamonn.wfc
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.graphics.g2d.{
-  BitmapFont,
-  GlyphLayout,
-  PolygonSpriteBatch
-}
-import org.eamonn.wfc.Geometry._
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, GlyphLayout, PolygonSpriteBatch}
 import org.eamonn.wfc.util.GarbageCan
 
 object Text {
+  private val CharExtras = ""
+  var mediumFont: BitmapFont = _
+  var smallFont: BitmapFont = _
+  var tinyFont: BitmapFont = _
+
   def loadFonts()(implicit garbage: GarbageCan): Unit = {
     val generator = new FreeTypeFontGenerator(
       Gdx.files.internal("SpaceMono-Regular.ttf")
@@ -26,12 +26,6 @@ object Text {
     tinyFont = garbage.add(generator.generateFont(parameter))
     generator.dispose()
   }
-
-  private val CharExtras = ""
-
-  var mediumFont: BitmapFont = _
-  var smallFont: BitmapFont = _
-  var tinyFont: BitmapFont = _
 
   def draw(
       batch: PolygonSpriteBatch,

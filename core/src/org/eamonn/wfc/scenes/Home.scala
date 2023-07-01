@@ -12,7 +12,7 @@ import scala.util.Random
 class Home extends Scene {
 
   var grid: Array[gridItem] = Array.fill(dimensions * dimensions)(
-    gridItem(collapsed = false, List(BLANK, DOWN, LEFT, RIGHT, UP))
+    gridItem(collapsed = false, getAllTileNumbers())
   )
 
   override def init(): InputAdapter = {
@@ -59,7 +59,7 @@ class Home extends Scene {
             var downTile = nextGrid(index - dimensions)
             availOptions = availOptions.filter(optionAvailable =>
               downTile.options.exists(optionDown =>
-                tiles(optionDown).up == tiles(optionAvailable).down
+                tiles(optionDown).up == tiles(optionAvailable).down.reverse
               )
             )
           }
@@ -68,7 +68,7 @@ class Home extends Scene {
             var leftTile = nextGrid(index - 1)
             availOptions = availOptions.filter(optionAvailable =>
               leftTile.options.exists(optionLeft =>
-                tiles(optionLeft).right == tiles(optionAvailable).left
+                tiles(optionLeft).right == tiles(optionAvailable).left.reverse
               )
             )
           }
@@ -77,7 +77,7 @@ class Home extends Scene {
             var rightTile = nextGrid(index + 1)
             availOptions = availOptions.filter(optionAvailable =>
               rightTile.options.exists(optionRight =>
-                tiles(optionRight).left == tiles(optionAvailable).right
+                tiles(optionRight).left == tiles(optionAvailable).right.reverse
               )
             )
 
@@ -87,12 +87,12 @@ class Home extends Scene {
             var upTile = nextGrid(index + dimensions)
             availOptions = availOptions.filter(optionAvailable =>
               upTile.options.exists(optionUp =>
-                tiles(optionUp).down == tiles(optionAvailable).up
+                tiles(optionUp).down == tiles(optionAvailable).up.reverse
               )
             )
 
           }
-          if(availOptions.nonEmpty) {
+          if (availOptions.nonEmpty) {
             nextGrid(index).options = availOptions
             if (availOptions.length == 1) nextGrid(index).collapsed = true
           }
@@ -109,12 +109,24 @@ class Home extends Scene {
         batch.setColor(Color.WHITE)
         if (cell.collapsed) {
           var index = cell.options.head
+
           batch.draw(
             tiles(index).texture,
             x * screenUnit,
             y * screenUnit,
+            screenUnit/2,
+            screenUnit/2,
             screenUnit,
-            screenUnit
+            screenUnit,
+            1f,
+            1f,
+            tiles(index).rot,
+            0,
+            0,
+            9,
+            9,
+            false,
+            false
           )
         } else {
           batch.setColor(Color.GRAY)
@@ -137,9 +149,42 @@ case class gridItem(
 )
 
 case class tileType(
-    var down: Int,
-    var left: Int,
-    var right: Int,
-    var up: Int,
+    var down: String,
+    var left: String,
+    var right: String,
+    var up: String,
+    var rot: Float = 0f,
     var texture: TextureWrapper
-)
+) {
+
+  def rotateTile(rotation: Int): tileType = {
+    if (rotation == 1) {
+      return tileType(
+        texture = texture,
+        down = right,
+        left = down,
+        up = left,
+        right = up,
+        rot = -90
+      )
+    } else if (rotation == 2) {
+      return tileType(
+        texture = texture,
+        down = up,
+        left = right,
+        up = down,
+        right = left,
+        rot = -180
+      )
+    } else if (rotation == 3) {
+      return tileType(
+        texture = texture,
+        down = left,
+        left = up,
+        up = right,
+        right = down,
+        rot = -270
+      )
+    } else return this
+  }
+}

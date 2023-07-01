@@ -25,6 +25,59 @@ class Home extends Scene {
     None
   }
 
+  def getAllowed(x: Int, y: Int): List[Int] = {
+    var index = x + y * dimensions
+
+    var availOptions = grid(index).options
+
+    //look down
+    if (y > 0) {
+      var downTile = grid(index - dimensions)
+      availOptions = availOptions.filter(optionAvailable =>
+        downTile.options.exists(optionDown =>
+          tiles(optionDown).up == tiles(optionAvailable).down.reverse
+        )
+      )
+    } else {
+      availOptions = availOptions.filter(avail => tiles(avail).down == "000000000")
+    }
+    //look left
+    if (x > 0) {
+      var leftTile = grid(index - 1)
+      availOptions = availOptions.filter(optionAvailable =>
+        leftTile.options.exists(optionLeft =>
+          tiles(optionLeft).right == tiles(optionAvailable).left.reverse
+        )
+      )
+    } else {
+      availOptions = availOptions.filter(avail => tiles(avail).left == "000000000")
+    }
+    //look right
+    if (x < dimensions - 1) {
+      var rightTile = grid(index + 1)
+      availOptions = availOptions.filter(optionAvailable =>
+        rightTile.options.exists(optionRight =>
+          tiles(optionRight).left == tiles(optionAvailable).right.reverse
+        )
+      )
+
+    } else {
+      availOptions = availOptions.filter(avail => tiles(avail).right == "000000000")
+    }
+    //look up
+    if (y < dimensions - 1) {
+      var upTile = grid(index + dimensions)
+      availOptions = availOptions.filter(optionAvailable =>
+        upTile.options.exists(optionUp =>
+          tiles(optionUp).down == tiles(optionAvailable).up.reverse
+        )
+      )
+    } else {
+      availOptions = availOptions.filter(avail => tiles(avail).up == "000000000")
+    }
+    availOptions
+  }
+
   //pick cell with least entropy
   def collapseLeast(): Unit = {
     if (grid.exists(_.collapsed == false)) {
@@ -35,12 +88,23 @@ class Home extends Scene {
       )
 
       val picked = least(Random.nextInt(least.length))
-      picked.collapsed = true
-      picked.options = List(
-        picked.options(Random.nextInt(picked.options.length))
-      )
 
-      grid = generateNewGrid()
+      var x = grid.indexOf(picked)%dimensions
+      var y = (grid.indexOf(picked) - x)/dimensions
+      var allowed = getAllowed(x, y)
+      if(allowed.isEmpty){
+        grid = Array.fill(dimensions * dimensions)(
+          gridItem(collapsed = false, getAllTileNumbers())
+        )
+      } else {
+        picked.options = List(
+          allowed(Random.nextInt(allowed.length))
+        )
+        picked.collapsed = true
+
+
+        grid = generateNewGrid()
+      }
     }
   }
 
@@ -52,53 +116,7 @@ class Home extends Scene {
         if (grid(index).collapsed) {
           nextGrid(index) = grid(index)
         } else {
-          var availOptions = grid(index).options
-
-          //look down
-          if (y > 0) {
-            var downTile = nextGrid(index - dimensions)
-            availOptions = availOptions.filter(optionAvailable =>
-              downTile.options.exists(optionDown =>
-                tiles(optionDown).up == tiles(optionAvailable).down.reverse
-              )
-            )
-          }  else {
-            availOptions = availOptions.filter(avail => tiles(avail).down == "000000000")
-          }
-          //look left
-          if (x > 0) {
-            var leftTile = nextGrid(index - 1)
-            availOptions = availOptions.filter(optionAvailable =>
-              leftTile.options.exists(optionLeft =>
-                tiles(optionLeft).right == tiles(optionAvailable).left.reverse
-              )
-            )
-          } else {
-            availOptions = availOptions.filter(avail => tiles(avail).left == "000000000")
-          }
-          //look right
-          if (x < dimensions - 1) {
-            var rightTile = nextGrid(index + 1)
-            availOptions = availOptions.filter(optionAvailable =>
-              rightTile.options.exists(optionRight =>
-                tiles(optionRight).left == tiles(optionAvailable).right.reverse
-              )
-            )
-
-          } else {
-            availOptions = availOptions.filter(avail => tiles(avail).right == "000000000")
-          }
-          //look up
-          if (y < dimensions - 1) {
-            var upTile = nextGrid(index + dimensions)
-            availOptions = availOptions.filter(optionAvailable =>
-              upTile.options.exists(optionUp =>
-                tiles(optionUp).down == tiles(optionAvailable).up.reverse
-              )
-            )
-          } else {
-            availOptions = availOptions.filter(avail => tiles(avail).up == "000000000")
-          }
+          var availOptions = getAllowed(x, y)
           if (availOptions.nonEmpty) {
             nextGrid(index).options = availOptions
             if (availOptions.length == 1) nextGrid(index).collapsed = true
@@ -134,8 +152,8 @@ class Home extends Scene {
             tiles(index).rot,
             0,
             0,
-            9,
-            9,
+            27,
+            27,
             false,
             false
           )

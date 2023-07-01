@@ -61,6 +61,34 @@ package object wfc {
     up = "000000000",
     texture = Wfc.five
   )
+  val six = tileType(
+    down = "000010000",
+    left = "000000000",
+    right = "111111110",
+    up = "011111111",
+    texture = Wfc.six
+  )
+  val seven = tileType(
+    down = "000010000",
+    left = "000010000",
+    right = "000010000",
+    up = "000000000",
+    texture = Wfc.seven
+  )
+  val eight = tileType(
+    down = "000010000",
+    left = "011111111",
+    right = "111111110",
+    up = "111111111",
+    texture = Wfc.eight
+  )
+  val nine = tileType(
+    down = "000000000",
+    left = "011111111",
+    right = "111111110",
+    up = "111111111",
+    texture = Wfc.nine
+  )
   val tiles: List[tileType] =
     List(
       zero,
@@ -80,12 +108,28 @@ package object wfc {
       four.rotateTile(3),
       five.rotateTile(1),
       five.rotateTile(2),
-      five.rotateTile(3)
+      five.rotateTile(3),
+      six,
+      seven,
+      eight,
+      nine,
+      six.rotateTile(1),
+      six.rotateTile(2),
+      six.rotateTile(3),
+      seven.rotateTile(1),
+      seven.rotateTile(2),
+      seven.rotateTile(3),
+      eight.rotateTile(1),
+      eight.rotateTile(2),
+      eight.rotateTile(3),
+      nine.rotateTile(1),
+      nine.rotateTile(2),
+      nine.rotateTile(3)
     )
 
   def getAllTileNumbers(): List[Int] = {
     var tileNums = List.empty[Int]
-    for(i <- 0 until tiles.length){
+    for (i <- 0 until tiles.length) {
       tileNums = i :: tileNums
     }
     return tileNums

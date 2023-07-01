@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
-// Things kinda stolen from scaloi
 package object wfc {
 
   val BLANK = 0
@@ -18,7 +17,7 @@ package object wfc {
   val LEFT = 2
   val RIGHT = 3
   val UP = 4
-  val dimensions = 32
+  val dimensions = 8
   val zero = tileType(
     down = "000000000",
     left = "000000000",
@@ -71,8 +70,8 @@ package object wfc {
   val seven = tileType(
     down = "000010000",
     left = "000010000",
-    right = "000010000",
-    up = "000000000",
+    right = "111111110",
+    up = "011111111",
     texture = Wfc.seven
   )
   val eight = tileType(

@@ -22,7 +22,7 @@ class HomeControl(home: Home) extends InputAdapter {
   override def keyUp(keycode: Int): Boolean = {
     if (keycode == Keys.R) {
       home.grid = Array.fill(dimensions * dimensions)(
-        gridItem(collapsed = false, List(BLANK, DOWN, LEFT, RIGHT, UP))
+        gridItem(collapsed = false, getAllTileNumbers())
       )
     }
     true

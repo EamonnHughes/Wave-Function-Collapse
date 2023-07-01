@@ -62,6 +62,8 @@ class Home extends Scene {
                 tiles(optionDown).up == tiles(optionAvailable).down.reverse
               )
             )
+          }  else {
+            availOptions = availOptions.filter(avail => tiles(avail).down == "000000000")
           }
           //look left
           if (x > 0) {
@@ -71,6 +73,8 @@ class Home extends Scene {
                 tiles(optionLeft).right == tiles(optionAvailable).left.reverse
               )
             )
+          } else {
+            availOptions = availOptions.filter(avail => tiles(avail).left == "000000000")
           }
           //look right
           if (x < dimensions - 1) {
@@ -81,6 +85,8 @@ class Home extends Scene {
               )
             )
 
+          } else {
+            availOptions = availOptions.filter(avail => tiles(avail).right == "000000000")
           }
           //look up
           if (y < dimensions - 1) {
@@ -90,11 +96,16 @@ class Home extends Scene {
                 tiles(optionUp).down == tiles(optionAvailable).up.reverse
               )
             )
-
+          } else {
+            availOptions = availOptions.filter(avail => tiles(avail).up == "000000000")
           }
           if (availOptions.nonEmpty) {
             nextGrid(index).options = availOptions
             if (availOptions.length == 1) nextGrid(index).collapsed = true
+          } else {
+            grid = Array.fill(dimensions * dimensions)(
+              gridItem(collapsed = false, getAllTileNumbers())
+            )
           }
         }
       }

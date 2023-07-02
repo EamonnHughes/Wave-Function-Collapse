@@ -144,7 +144,8 @@ package object wfc {
     left = "000000000",
     right = "000000000",
     up = "000000000",
-    texture = Wfc.four
+    texture = Wfc.four,
+    isRoom = true
   )
   val five = tileType(
     down = "000111000",
@@ -158,28 +159,32 @@ package object wfc {
     left = "000000000",
     right = "111111110",
     up = "011111111",
-    texture = Wfc.six
+    texture = Wfc.six,
+    isRoom = true
   )
   val seven = tileType(
     down = "000111000",
     left = "000111000",
     right = "111111110",
     up = "011111111",
-    texture = Wfc.seven
+    texture = Wfc.seven,
+    isRoom = true
   )
   val eight = tileType(
     down = "000111000",
     left = "011111111",
     right = "111111110",
     up = "111111111",
-    texture = Wfc.eight
+    texture = Wfc.eight,
+    isRoom = true
   )
   val nine = tileType(
     down = "000000000",
     left = "011111111",
     right = "111111110",
     up = "111111111",
-    texture = Wfc.nine
+    texture = Wfc.nine,
+    isRoom = true
   )
   val tiles: List[tileType] =
     List(

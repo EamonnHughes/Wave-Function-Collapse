@@ -40,9 +40,9 @@ class Game extends Scene {
   }
 
   def removeExclave(): Unit = {
-    var onlyWalkables = grid.filter(item => item.collapsed && item.options.head != 0)
+    var onlyRooms = grid.filter(item => item.collapsed && tiles(item.options.head).isRoom)
 
-    var loc = onlyWalkables(Random.nextInt(onlyWalkables.length))
+    var loc = onlyRooms(Random.nextInt(onlyRooms.length))
 
     loc.isEntrance = true
 
@@ -218,7 +218,8 @@ case class tileType(
     var right: String,
     var up: String,
     var rot: Float = 0f,
-    var texture: TextureWrapper
+    var texture: TextureWrapper,
+    var isRoom: Boolean = false
 ) {
 
   def rotateTile(rotation: Int): tileType = {
@@ -229,7 +230,8 @@ case class tileType(
         left = down,
         up = left,
         right = up,
-        rot = -90
+        rot = -90,
+        isRoom = this.isRoom
       )
     } else if (rotation == 2) {
       return tileType(
@@ -238,7 +240,8 @@ case class tileType(
         left = right,
         up = down,
         right = left,
-        rot = -180
+        rot = -180,
+        isRoom = this.isRoom
       )
     } else if (rotation == 3) {
       return tileType(
@@ -247,7 +250,8 @@ case class tileType(
         left = up,
         up = right,
         right = down,
-        rot = -270
+        rot = -270,
+        isRoom = this.isRoom
       )
     } else return this
   }

@@ -4,7 +4,7 @@ package scenes
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.InputAdapter
 
-class HomeControl(home: Home) extends InputAdapter {
+class GameControl(game: Game) extends InputAdapter {
   override def touchDown(
       screenX: Int,
       screenY: Int,
@@ -21,9 +21,8 @@ class HomeControl(home: Home) extends InputAdapter {
 
   override def keyUp(keycode: Int): Boolean = {
     if (keycode == Keys.R) {
-      home.grid = Array.fill(dimensions * dimensions)(
-        gridItem(collapsed = false, getAllTileNumbers())
-      )
+      game.reset()
+
     }
     true
 

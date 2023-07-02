@@ -9,20 +9,50 @@ import org.eamonn.wfc.util.TextureWrapper
 
 import scala.util.Random
 
-class Home extends Scene {
+class Game extends Scene {
+  def reset(): Unit = {
+    grid = Array.fill(dimensions * dimensions)(
+      gridItem(collapsed = false, getAllTileNumbers(), isEntrance = false)
+    )
+    exclavesRemoved = false
+  }
+
+  var exclavesRemoved = false
 
   var grid: Array[gridItem] = Array.fill(dimensions * dimensions)(
     gridItem(collapsed = false, getAllTileNumbers())
   )
 
   override def init(): InputAdapter = {
-    new HomeControl(this)
+    new GameControl(this)
 
   }
 
   override def update(delta: Float): Option[Scene] = {
-    collapseLeast()
+    if(grid.exists(item => !item.collapsed)) {collapseLeast()} else if(!exclavesRemoved) {
+      removeExclave()
+      println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)))
+      println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)).filter(i => doesConnect(i, grid.indexOf(grid.filter(l => l.isEntrance).head), this)))
+      exclavesRemoved = true
+      if(grid.count(e => e.options.head != 0) <= 10) reset()
+    }
     None
+  }
+
+  def removeExclave(): Unit = {
+    var onlyWalkables = grid.filter(item => item.collapsed && item.options.head != 0)
+
+    var loc = onlyWalkables(Random.nextInt(onlyWalkables.length))
+
+    loc.isEntrance = true
+
+    for(i <- 0 until dimensions * dimensions) {
+      if(findPath(i, grid.indexOf(loc), this).isEmpty) {
+        grid(i).options = List(0)
+      }
+
+    }
+
   }
 
   def getAllowed(x: Int, y: Int): List[Int] = {
@@ -157,6 +187,10 @@ class Home extends Scene {
             false,
             false
           )
+          if(cell.isEntrance){
+            batch.draw(Wfc.stairs, x*screenUnit, y*screenUnit, screenUnit, screenUnit)
+          }
+
         } else {
           batch.setColor(Color.GRAY)
           batch.draw(
@@ -174,7 +208,8 @@ class Home extends Scene {
 
 case class gridItem(
     var collapsed: Boolean = false,
-    var options: List[Int] = List(BLANK, DOWN, LEFT, RIGHT, UP)
+    var options: List[Int] = getAllTileNumbers(),
+    var isEntrance: Boolean = false
 )
 
 case class tileType(

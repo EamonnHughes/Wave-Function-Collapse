@@ -3,14 +3,107 @@ package org.eamonn
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input.Peripheral
 import com.badlogic.gdx.graphics.Color
-import org.eamonn.wfc.scenes.tileType
+import org.eamonn.wfc.{dimensions, doesConnect, toXnY}
+import org.eamonn.wfc.scenes.{Game, tileType}
 import org.eamonn.wfc.util.TextureWrapper
 
 import java.util.concurrent.TimeUnit
+import scala.collection.mutable
 import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 package object wfc {
+
+  def doesConnect(one: Int, two: Int, game: Game): Boolean = {
+    var doesC = false
+    val dif = one - two
+    if (dif == 1) {
+      if (
+        tiles(game.grid(one).options.head).left == tiles(
+          game.grid(two).options.head
+        ).right.reverse && tiles(
+          game.grid(one).options.head
+        ).left != "000000000" && tiles(
+          game.grid(two).options.head
+        ).right != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == -1) {
+      if (
+        tiles(game.grid(one).options.head).right == tiles(
+          game.grid(two).options.head
+        ).left.reverse && tiles(
+          game.grid(one).options.head
+        ).right != "000000000" && tiles(
+          game.grid(two).options.head
+        ).left != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == dimensions) {
+      if (
+        tiles(game.grid(one).options.head).down == tiles(
+          game.grid(two).options.head
+        ).up.reverse
+        && tiles(game.grid(one).options.head).down != "000000000" && tiles(
+          game.grid(two).options.head
+        ).up != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == -dimensions) {
+      if (
+        tiles(game.grid(one).options.head).up == tiles(
+          game.grid(two).options.head
+        ).down.reverse && tiles(
+          game.grid(one).options.head
+        ).up != "000000000" && tiles(
+          game.grid(two).options.head
+        ).down != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+
+    return doesC
+
+  }
+
+  def toXnY(i: Int): (Int, Int) = {
+    var x = i % dimensions
+    var y = (i - x) / dimensions
+    (x, y)
+  }
+  def findPath(start: Int, end: Int, game: Game): Option[Path] = {
+    val visitedCells = mutable.Set.empty[Int]
+    var paths = List(Path(List(start)))
+    while (!paths.exists(lInt => lInt.list.head == end) && paths.nonEmpty) {
+      paths = for {
+        path <- paths
+        newPath <- path.extendPath(visitedCells, game)
+      } yield newPath
+
+    }
+    paths.find(path => path.list.head == end)
+  }
+
+  def isAdjacent(one: Int, two: Int): Boolean = {
+    if (Math.abs(one - two) == dimensions || Math.abs(one - two) == 1) true
+    else false
+  }
+
+  def getAdjacents(one: Int): List[Int] = {
+    List(
+      one + 1,
+      one - 1,
+      one + dimensions,
+      one - dimensions
+    ).filter(e => {
+      var x = wfc.toXnY(e)._1
+      var y = wfc.toXnY(e)._2
+      (x >= 0 && x < dimensions && y >= 0 && y < dimensions)
+    })
+  }
 
   val BLANK = 0
   val DOWN = 1
@@ -229,4 +322,26 @@ package object wfc {
   private object Booleate {
     implicit def booleate: Booleate[Boolean] = b => b
   }
+}
+
+case class Path(list: List[Int]) {
+  def extendPath(visCells: mutable.Set[Int], game: Game): List[Path] = {
+    for {
+      loc <- wfc
+        .getAdjacents(list.head)
+        .filter(e => {
+          var x = wfc.toXnY(e)._1
+          var y = wfc.toXnY(e)._2
+          if (x >= 0 && x < dimensions && y >= 0 && y < dimensions) true
+          else false
+        })
+        .filter(e => game.grid(e).options.head != 0)
+        .filter(e => doesConnect(e, list.head, game))
+      if (visCells.add(loc))
+    } yield add(loc)
+
+  }
+
+  def add(loc: Int): Path = Path(loc :: list)
+
 }

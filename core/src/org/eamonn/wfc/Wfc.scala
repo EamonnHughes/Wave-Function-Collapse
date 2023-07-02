@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import com.badlogic.gdx.math.Matrix4
 import com.badlogic.gdx.utils.ScreenUtils
 import com.badlogic.gdx.{ApplicationAdapter, Gdx, Input}
-import org.eamonn.wfc.scenes.Home
+import org.eamonn.wfc.scenes.Game
 import org.eamonn.wfc.util.{GarbageCan, TextureWrapper}
 
 class Wfc extends ApplicationAdapter {
@@ -33,12 +33,13 @@ class Wfc extends ApplicationAdapter {
     Wfc.eight = TextureWrapper.load("8.png")
     Wfc.nine = TextureWrapper.load("9.png")
     Wfc.unChosen = TextureWrapper.load("Square.png")
+    Wfc.stairs = TextureWrapper.load("stair.png")
 
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
 
     Text.loadFonts()
 
-    setScene(new Home)
+    setScene(new Game)
   }
 
   override def render(): Unit = {
@@ -79,6 +80,7 @@ object Wfc {
   var seven: TextureWrapper = _
   var eight: TextureWrapper = _
   var nine: TextureWrapper = _
+  var stairs: TextureWrapper = _
 
   def mobile: Boolean = isMobile(Gdx.app.getType)
 

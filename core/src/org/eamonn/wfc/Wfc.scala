@@ -33,9 +33,10 @@ class Wfc extends ApplicationAdapter {
     Wfc.seven = TextureWrapper.load("7.png")
     Wfc.eight = TextureWrapper.load("8.png")
     Wfc.nine = TextureWrapper.load("9.png")
-    Wfc.unChosen = TextureWrapper.load("Square.png")
+    Wfc.square = TextureWrapper.load("Square.png")
     Wfc.stairs = TextureWrapper.load("stair.png")
     Wfc.minion = TextureWrapper.load("minion.png")
+    Wfc.minionBed = TextureWrapper.load("bed.png")
 
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
 
@@ -72,7 +73,7 @@ object Wfc {
 
   var sound: Sound = _
   var zero: TextureWrapper = _
-  var unChosen: TextureWrapper = _
+  var square: TextureWrapper = _
   var one: TextureWrapper = _
   var two: TextureWrapper = _
   var three: TextureWrapper = _
@@ -84,6 +85,7 @@ object Wfc {
   var nine: TextureWrapper = _
   var stairs: TextureWrapper = _
   var minion: TextureWrapper = _
+  var minionBed: TextureWrapper = _
 
   def mobile: Boolean = isMobile(Gdx.app.getType)
 

@@ -5,12 +5,14 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import org.eamonn.wfc.Scene
+import org.eamonn.wfc.Wfc.square
 import org.eamonn.wfc.util.TextureWrapper
 
 import scala.util.Random
 
 class Game extends Scene {
   def walkables = grid.filter(g => g.options.head != 0)
+  var time = 0f
 
   def reset(): Unit = {
     grid = Array.fill(dimensions * dimensions)(
@@ -34,6 +36,10 @@ class Game extends Scene {
   }
 
   override def update(delta: Float): Option[Scene] = {
+    time += delta / 4
+    if (time >= 12) {
+      time = -12
+    }
     if (grid.exists(item => !item.collapsed)) { collapseLeast() }
     else if (!exclavesRemoved) {
       removeExclave()
@@ -222,7 +228,7 @@ class Game extends Scene {
         } else {
           batch.setColor(Color.GRAY)
           batch.draw(
-            Wfc.unChosen,
+            Wfc.square,
             x * screenUnit,
             y * screenUnit,
             screenUnit,
@@ -237,10 +243,21 @@ class Game extends Scene {
             screenUnit,
             screenUnit
           )
+          batch.draw(
+            Wfc.minionBed,
+            toXnY(m.home)._1 * screenUnit,
+            toXnY(m.home)._2 * screenUnit,
+            screenUnit,
+            screenUnit
+          )
         })
       }
     }
+    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 + 0.25f) min 1f))
+    batch.draw(square, 0f, 0f, Geometry.ScreenWidth, Geometry.ScreenHeight)
+    batch.setColor(Color.WHITE)
   }
+
 }
 
 case class gridItem(

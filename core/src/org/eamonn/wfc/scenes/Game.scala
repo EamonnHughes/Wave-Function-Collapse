@@ -34,7 +34,7 @@ class Game extends Scene {
       println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)))
       println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)).filter(i => doesConnect(i, grid.indexOf(grid.filter(l => l.isEntrance).head), this)))
       exclavesRemoved = true
-      if(grid.count(e => e.options.head != 0) <= 10) reset()
+      if(grid.count(e => e.options.head != 0) <= 20) reset()
     }
     None
   }

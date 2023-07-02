@@ -253,7 +253,7 @@ class Game extends Scene {
         })
       }
     }
-    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 + 0.25f) min 1f))
+    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 - 0.25f) min 1f) max 0f)
     batch.draw(square, 0f, 0f, Geometry.ScreenWidth, Geometry.ScreenHeight)
     batch.setColor(Color.WHITE)
   }

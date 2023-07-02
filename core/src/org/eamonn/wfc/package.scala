@@ -74,6 +74,9 @@ package object wfc {
     var y = (i - x) / dimensions
     (x, y)
   }
+
+  def fromXnY(x: Int, y: Int): Int = x + y * dimensions
+
   def findPath(start: Int, end: Int, game: Game): Option[Path] = {
     val visitedCells = mutable.Set.empty[Int]
     var paths = List(Path(List(start)))

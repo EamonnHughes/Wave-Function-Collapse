@@ -10,12 +10,17 @@ import org.eamonn.wfc.util.TextureWrapper
 import scala.util.Random
 
 class Game extends Scene {
+  def walkables = grid.filter(g => g.options.head != 0)
+
   def reset(): Unit = {
     grid = Array.fill(dimensions * dimensions)(
       gridItem(collapsed = false, getAllTileNumbers(), isEntrance = false)
     )
     exclavesRemoved = false
+    minions = List.empty
   }
+
+  var minions: List[Minion] = List.empty
 
   var exclavesRemoved = false
 
@@ -29,29 +34,43 @@ class Game extends Scene {
   }
 
   override def update(delta: Float): Option[Scene] = {
-    if(grid.exists(item => !item.collapsed)) {collapseLeast()} else if(!exclavesRemoved) {
+    if (grid.exists(item => !item.collapsed)) { collapseLeast() }
+    else if (!exclavesRemoved) {
       removeExclave()
       println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)))
-      println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)).filter(i => doesConnect(i, grid.indexOf(grid.filter(l => l.isEntrance).head), this)))
+      println(
+        getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)).filter(
+          i =>
+            doesConnect(
+              i,
+              grid.indexOf(grid.filter(l => l.isEntrance).head),
+              this
+            )
+        )
+      )
       exclavesRemoved = true
-      if(grid.count(e => e.options.head != 0) <= 20) reset()
+      if (grid.count(e => e.options.head != 0) <= 20) reset()
     }
+    minions.foreach(m => m.update(delta))
     None
   }
 
   def removeExclave(): Unit = {
-    var onlyRooms = grid.filter(item => item.collapsed && tiles(item.options.head).isRoom)
+    var onlyRooms =
+      grid.filter(item => item.collapsed && tiles(item.options.head).isRoom)
 
     var loc = onlyRooms(Random.nextInt(onlyRooms.length))
 
     loc.isEntrance = true
 
-    for(i <- 0 until dimensions * dimensions) {
-      if(findPath(i, grid.indexOf(loc), this).isEmpty) {
+    for (i <- 0 until dimensions * dimensions) {
+      if (findPath(i, grid.indexOf(loc), this).isEmpty) {
         grid(i).options = List(0)
       }
 
     }
+
+    minions = Minion(grid.indexOf(loc), this) :: minions
 
   }
 
@@ -69,7 +88,8 @@ class Game extends Scene {
         )
       )
     } else {
-      availOptions = availOptions.filter(avail => tiles(avail).down == "000000000")
+      availOptions =
+        availOptions.filter(avail => tiles(avail).down == "000000000")
     }
     //look left
     if (x > 0) {
@@ -80,7 +100,8 @@ class Game extends Scene {
         )
       )
     } else {
-      availOptions = availOptions.filter(avail => tiles(avail).left == "000000000")
+      availOptions =
+        availOptions.filter(avail => tiles(avail).left == "000000000")
     }
     //look right
     if (x < dimensions - 1) {
@@ -92,7 +113,8 @@ class Game extends Scene {
       )
 
     } else {
-      availOptions = availOptions.filter(avail => tiles(avail).right == "000000000")
+      availOptions =
+        availOptions.filter(avail => tiles(avail).right == "000000000")
     }
     //look up
     if (y < dimensions - 1) {
@@ -103,7 +125,8 @@ class Game extends Scene {
         )
       )
     } else {
-      availOptions = availOptions.filter(avail => tiles(avail).up == "000000000")
+      availOptions =
+        availOptions.filter(avail => tiles(avail).up == "000000000")
     }
     availOptions
   }
@@ -119,10 +142,10 @@ class Game extends Scene {
 
       val picked = least(Random.nextInt(least.length))
 
-      var x = grid.indexOf(picked)%dimensions
-      var y = (grid.indexOf(picked) - x)/dimensions
+      var x = grid.indexOf(picked) % dimensions
+      var y = (grid.indexOf(picked) - x) / dimensions
       var allowed = getAllowed(x, y)
-      if(allowed.isEmpty){
+      if (allowed.isEmpty) {
         grid = Array.fill(dimensions * dimensions)(
           gridItem(collapsed = false, getAllTileNumbers())
         )
@@ -131,7 +154,6 @@ class Game extends Scene {
           allowed(Random.nextInt(allowed.length))
         )
         picked.collapsed = true
-
 
         grid = generateNewGrid()
       }
@@ -173,8 +195,8 @@ class Game extends Scene {
             tiles(index).texture,
             x * screenUnit,
             y * screenUnit,
-            screenUnit/2,
-            screenUnit/2,
+            screenUnit / 2,
+            screenUnit / 2,
             screenUnit,
             screenUnit,
             1f,
@@ -187,8 +209,14 @@ class Game extends Scene {
             false,
             false
           )
-          if(cell.isEntrance){
-            batch.draw(Wfc.stairs, x*screenUnit, y*screenUnit, screenUnit, screenUnit)
+          if (cell.isEntrance) {
+            batch.draw(
+              Wfc.stairs,
+              x * screenUnit,
+              y * screenUnit,
+              screenUnit,
+              screenUnit
+            )
           }
 
         } else {
@@ -201,6 +229,15 @@ class Game extends Scene {
             screenUnit
           )
         }
+        minions.foreach(m => {
+          batch.draw(
+            Wfc.minion,
+            toXnY(m.location)._1 * screenUnit,
+            toXnY(m.location)._2 * screenUnit,
+            screenUnit,
+            screenUnit
+          )
+        })
       }
     }
   }

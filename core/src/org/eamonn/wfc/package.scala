@@ -26,56 +26,56 @@ package object wfc {
     texture = Wfc.zero
   )
   val one = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "000000000",
     right = "000000000",
-    up = "000010000",
+    up = "000111000",
     texture = Wfc.one
   )
   val two = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "000000000",
-    right = "000010000",
-    up = "000010000",
+    right = "000111000",
+    up = "000111000",
     texture = Wfc.two
   )
   val three = tileType(
-    down = "000010000",
-    left = "000010000",
-    right = "000010000",
-    up = "000010000",
+    down = "000111000",
+    left = "000111000",
+    right = "000111000",
+    up = "000111000",
     texture = Wfc.three
   )
   val four = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "000000000",
     right = "000000000",
     up = "000000000",
     texture = Wfc.four
   )
   val five = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "000000000",
-    right = "000010000",
+    right = "000111000",
     up = "000000000",
     texture = Wfc.five
   )
   val six = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "000000000",
     right = "111111110",
     up = "011111111",
     texture = Wfc.six
   )
   val seven = tileType(
-    down = "000010000",
-    left = "000010000",
+    down = "000111000",
+    left = "000111000",
     right = "111111110",
     up = "011111111",
     texture = Wfc.seven
   )
   val eight = tileType(
-    down = "000010000",
+    down = "000111000",
     left = "011111111",
     right = "111111110",
     up = "111111111",

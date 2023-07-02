@@ -152,8 +152,8 @@ class Home extends Scene {
             tiles(index).rot,
             0,
             0,
-            27,
-            27,
+            9,
+            9,
             false,
             false
           )

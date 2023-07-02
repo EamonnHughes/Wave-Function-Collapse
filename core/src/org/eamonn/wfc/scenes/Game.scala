@@ -237,16 +237,16 @@ class Game extends Scene {
         }
         minions.foreach(m => {
           batch.draw(
-            Wfc.minion,
-            toXnY(m.location)._1 * screenUnit,
-            toXnY(m.location)._2 * screenUnit,
+            Wfc.minionBed,
+            toXnY(m.home)._1 * screenUnit,
+            toXnY(m.home)._2 * screenUnit,
             screenUnit,
             screenUnit
           )
           batch.draw(
-            Wfc.minionBed,
-            toXnY(m.home)._1 * screenUnit,
-            toXnY(m.home)._2 * screenUnit,
+            Wfc.minion,
+            toXnY(m.location)._1 * screenUnit,
+            toXnY(m.location)._2 * screenUnit,
             screenUnit,
             screenUnit
           )

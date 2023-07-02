@@ -43,17 +43,6 @@ class Game extends Scene {
     if (grid.exists(item => !item.collapsed)) { collapseLeast() }
     else if (!exclavesRemoved) {
       removeExclave()
-      println(getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)))
-      println(
-        getAdjacents(grid.indexOf(grid.filter(l => l.isEntrance).head)).filter(
-          i =>
-            doesConnect(
-              i,
-              grid.indexOf(grid.filter(l => l.isEntrance).head),
-              this
-            )
-        )
-      )
       exclavesRemoved = true
       if (grid.count(e => e.options.head != 0) <= 20) reset()
     }
@@ -76,7 +65,7 @@ class Game extends Scene {
 
     }
 
-    minions = Minion(grid.indexOf(loc), this) :: minions
+    minions = Minion(grid.indexOf(loc), this) :: Minion(grid.indexOf(loc), this) :: Minion(grid.indexOf(loc), this) :: minions
 
   }
 
@@ -253,7 +242,7 @@ class Game extends Scene {
         })
       }
     }
-    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 - 0.25f) min 1f) max 0f)
+    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 - 0.25f) min 0.725f) max 0f)
     batch.draw(square, 0f, 0f, Geometry.ScreenWidth, Geometry.ScreenHeight)
     batch.setColor(Color.WHITE)
   }

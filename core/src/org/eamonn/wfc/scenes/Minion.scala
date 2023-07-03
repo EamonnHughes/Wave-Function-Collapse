@@ -13,12 +13,12 @@ case class Minion(var location: Int, game: Game) {
     if (home == -1) {
       home = game.grid.indexOf(
         game.grid.filter(g =>
-          !g.isEntrance && !tiles(g.options.head).isRoom && !game.minions
+          !g.isEntrance && tiles(g.options.head).isRoom && !game.minions
             .exists(m => m.home == game.grid.indexOf(g))
         )(
           Random.nextInt(
             game.grid.count(g =>
-              !g.isEntrance && !tiles(g.options.head).isRoom && !game.minions
+              !g.isEntrance && tiles(g.options.head).isRoom && !game.minions
                 .exists(m => m.home == game.grid.indexOf(g))
             )
           )

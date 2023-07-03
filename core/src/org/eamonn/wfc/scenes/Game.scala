@@ -5,7 +5,7 @@ import com.badlogic.gdx.InputAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.PolygonSpriteBatch
 import org.eamonn.wfc.Scene
-import org.eamonn.wfc.Wfc.square
+import org.eamonn.wfc.Wfc.{minion, square}
 import org.eamonn.wfc.util.TextureWrapper
 
 import scala.util.Random
@@ -13,6 +13,7 @@ import scala.util.Random
 class Game extends Scene {
   var time = 0f
   var minions: List[Minion] = List.empty
+  var fights: List[Fight] = List.empty
   var exclavesRemoved = false
   var grid: Array[gridItem] = Array.fill(dimensions * dimensions)(
     gridItem(collapsed = false, getAllTileNumbers())
@@ -36,7 +37,25 @@ class Game extends Scene {
       exclavesRemoved = true
       if (grid.count(e => tiles(e.options.head).isRoom) <= 12) reset()
     }
-    minions.foreach(m => m.update(delta))
+    minions
+      .filter(m => !fights.exists(f => f.minions.contains(m)))
+      .foreach(m => m.update(delta))
+    minions
+      .filter(m => !fights.exists(f => f.minions.contains(m)))
+      .foreach(minOne => {
+        if (
+          minions
+            .filter(m => !(m eq minOne) && !fights.exists(f => f.minions.contains(m)))
+            .exists(m => m.location == minOne.location)
+        ) {
+          fights = Fight(
+            minOne.location,
+            minions.filter(m => m.location == minOne.location),
+            this
+          ) :: fights
+        }
+      })
+    fights.foreach(f => f.update(delta))
     None
   }
 
@@ -46,6 +65,7 @@ class Game extends Scene {
     )
     exclavesRemoved = false
     minions = List.empty
+    fights = List.empty
   }
 
   def removeExclave(): Unit = {
@@ -230,14 +250,25 @@ class Game extends Scene {
             screenUnit,
             screenUnit
           )
+          if (!fights.exists(f => f.minions.contains(m))) {
+            batch.draw(
+              Wfc.minion,
+              toXnY(m.location)._1 * screenUnit,
+              toXnY(m.location)._2 * screenUnit,
+              screenUnit,
+              screenUnit
+            )
+          }
+        })
+        fights.foreach(f =>
           batch.draw(
-            Wfc.minion,
-            toXnY(m.location)._1 * screenUnit,
-            toXnY(m.location)._2 * screenUnit,
+            Wfc.dust,
+            toXnY(f.loc)._1 * screenUnit,
+            toXnY(f.loc)._2 * screenUnit,
             screenUnit,
             screenUnit
           )
-        })
+        )
       }
     }
     batch.setColor(
@@ -300,5 +331,32 @@ case class tileType(
         isRoom = this.isRoom
       )
     } else return this
+  }
+}
+
+case class Fight(loc: Int, var minions: List[Minion], game: Game) {
+  var time = 0f
+  def update(delta: Float): Unit = {
+    time += delta
+    if (time >= .4f) {
+      val result = Random.nextInt(minions.length)
+      val min = minions(result)
+      var g = game.grid
+        .filter(g => {
+          doesConnect(game.grid.indexOf(g), loc, game)
+        })
+      val nLoc = if(g.nonEmpty) {
+         game.grid.indexOf(g.head)
+       } else {
+         loc
+       }
+
+      min.location = nLoc
+      min.destination = nLoc
+      minions = minions.filterNot(m => m eq min)
+    }
+    if (minions.length <= 1) {
+      game.fights = game.fights.filterNot(f => f eq this)
+    }
   }
 }

@@ -204,8 +204,7 @@ package object wfc {
   }
 
   def isAdjacent(one: Int, two: Int): Boolean = {
-    if (Math.abs(one - two) == dimensions || Math.abs(one - two) == 1) true
-    else false
+    (Math.abs(one - two) == dimensions || Math.abs(one - two) == 1)
   }
 
   def getAdjacents(one: Int): List[Int] = {

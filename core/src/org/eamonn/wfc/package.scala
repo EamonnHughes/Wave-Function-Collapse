@@ -3,9 +3,8 @@ package org.eamonn
 import com.badlogic.gdx.Gdx.input
 import com.badlogic.gdx.Input.Peripheral
 import com.badlogic.gdx.graphics.Color
-import org.eamonn.wfc.{dimensions, doesConnect, toXnY}
 import org.eamonn.wfc.scenes.{Game, tileType}
-import org.eamonn.wfc.util.TextureWrapper
+import org.eamonn.wfc.{dimensions, doesConnect}
 
 import java.util.concurrent.TimeUnit
 import scala.collection.mutable
@@ -13,100 +12,6 @@ import scala.concurrent.duration.FiniteDuration
 import scala.util.Random
 
 package object wfc {
-
-  def doesConnect(one: Int, two: Int, game: Game): Boolean = {
-    var doesC = false
-    val dif = one - two
-    if (dif == 1) {
-      if (
-        tiles(game.grid(one).options.head).left == tiles(
-          game.grid(two).options.head
-        ).right.reverse && tiles(
-          game.grid(one).options.head
-        ).left != "000000000" && tiles(
-          game.grid(two).options.head
-        ).right != "000000000"
-      ) doesC = true
-      else doesC = false
-    }
-    if (dif == -1) {
-      if (
-        tiles(game.grid(one).options.head).right == tiles(
-          game.grid(two).options.head
-        ).left.reverse && tiles(
-          game.grid(one).options.head
-        ).right != "000000000" && tiles(
-          game.grid(two).options.head
-        ).left != "000000000"
-      ) doesC = true
-      else doesC = false
-    }
-    if (dif == dimensions) {
-      if (
-        tiles(game.grid(one).options.head).down == tiles(
-          game.grid(two).options.head
-        ).up.reverse
-        && tiles(game.grid(one).options.head).down != "000000000" && tiles(
-          game.grid(two).options.head
-        ).up != "000000000"
-      ) doesC = true
-      else doesC = false
-    }
-    if (dif == -dimensions) {
-      if (
-        tiles(game.grid(one).options.head).up == tiles(
-          game.grid(two).options.head
-        ).down.reverse && tiles(
-          game.grid(one).options.head
-        ).up != "000000000" && tiles(
-          game.grid(two).options.head
-        ).down != "000000000"
-      ) doesC = true
-      else doesC = false
-    }
-
-    return doesC
-
-  }
-
-  def toXnY(i: Int): (Int, Int) = {
-    var x = i % dimensions
-    var y = (i - x) / dimensions
-    (x, y)
-  }
-
-  def fromXnY(x: Int, y: Int): Int = x + y * dimensions
-
-  def findPath(start: Int, end: Int, game: Game): Option[Path] = {
-    val visitedCells = mutable.Set.empty[Int]
-    var paths = List(Path(List(start)))
-    while (!paths.exists(lInt => lInt.list.head == end) && paths.nonEmpty) {
-      paths = for {
-        path <- paths
-        newPath <- path.extendPath(visitedCells, game)
-      } yield newPath
-
-    }
-    paths.find(path => path.list.head == end)
-  }
-
-  def isAdjacent(one: Int, two: Int): Boolean = {
-    if (Math.abs(one - two) == dimensions || Math.abs(one - two) == 1) true
-    else false
-  }
-
-  def getAdjacents(one: Int): List[Int] = {
-    List(
-      one + 1,
-      one - 1,
-      one + dimensions,
-      one - dimensions
-    ).filter(e => {
-      var x = wfc.toXnY(e)._1
-      var y = wfc.toXnY(e)._2
-      (x >= 0 && x < dimensions && y >= 0 && y < dimensions)
-    })
-  }
 
   val BLANK = 0
   val DOWN = 1
@@ -226,6 +131,101 @@ package object wfc {
       nine.rotateTile(2),
       nine.rotateTile(3)
     )
+  val CenterAlign = 1
+
+  def doesConnect(one: Int, two: Int, game: Game): Boolean = {
+    var doesC = false
+    val dif = one - two
+    if (dif == 1) {
+      if (
+        tiles(game.grid(one).options.head).left == tiles(
+          game.grid(two).options.head
+        ).right.reverse && tiles(
+          game.grid(one).options.head
+        ).left != "000000000" && tiles(
+          game.grid(two).options.head
+        ).right != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == -1) {
+      if (
+        tiles(game.grid(one).options.head).right == tiles(
+          game.grid(two).options.head
+        ).left.reverse && tiles(
+          game.grid(one).options.head
+        ).right != "000000000" && tiles(
+          game.grid(two).options.head
+        ).left != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == dimensions) {
+      if (
+        tiles(game.grid(one).options.head).down == tiles(
+          game.grid(two).options.head
+        ).up.reverse
+        && tiles(game.grid(one).options.head).down != "000000000" && tiles(
+          game.grid(two).options.head
+        ).up != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+    if (dif == -dimensions) {
+      if (
+        tiles(game.grid(one).options.head).up == tiles(
+          game.grid(two).options.head
+        ).down.reverse && tiles(
+          game.grid(one).options.head
+        ).up != "000000000" && tiles(
+          game.grid(two).options.head
+        ).down != "000000000"
+      ) doesC = true
+      else doesC = false
+    }
+
+    return doesC
+
+  }
+
+  def fromXnY(x: Int, y: Int): Int = x + y * dimensions
+
+  def findPath(start: Int, end: Int, game: Game): Option[Path] = {
+    val visitedCells = mutable.Set.empty[Int]
+    var paths = List(Path(List(start)))
+    while (!paths.exists(lInt => lInt.list.head == end) && paths.nonEmpty) {
+      paths = for {
+        path <- paths
+        newPath <- path.extendPath(visitedCells, game)
+      } yield newPath
+
+    }
+    paths.find(path => path.list.head == end)
+  }
+
+  def isAdjacent(one: Int, two: Int): Boolean = {
+    if (Math.abs(one - two) == dimensions || Math.abs(one - two) == 1) true
+    else false
+  }
+
+  def getAdjacents(one: Int): List[Int] = {
+    List(
+      one + 1,
+      one - 1,
+      one + dimensions,
+      one - dimensions
+    ).filter(e => {
+      var x = wfc.toXnY(e)._1
+      var y = wfc.toXnY(e)._2
+      (x >= 0 && x < dimensions && y >= 0 && y < dimensions)
+    })
+  }
+
+  def toXnY(i: Int): (Int, Int) = {
+    var x = i % dimensions
+    var y = (i - x) / dimensions
+    (x, y)
+  }
 
   def getAllTileNumbers(): List[Int] = {
     var tileNums = List.empty[Int]
@@ -234,7 +234,6 @@ package object wfc {
     }
     return tileNums
   }
-  val CenterAlign = 1
 
   def d(die: Int): Int = Random.nextInt(die) + 1
 

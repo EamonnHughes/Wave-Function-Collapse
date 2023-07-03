@@ -16,7 +16,6 @@ class Wfc extends ApplicationAdapter {
   private var batch: PolygonSpriteBatch = _
   private var scene: Scene = _
 
-
   override def create(): Unit = {
 
     Gdx.input.setCatchKey(Input.Keys.BACK, true)
@@ -38,6 +37,7 @@ class Wfc extends ApplicationAdapter {
     Wfc.minion = TextureWrapper.load("minion.png")
     Wfc.minionBed = TextureWrapper.load("bed.png")
 
+    Wfc.dust = TextureWrapper.load("dustcloud.png")
     //    Wfc.sound = Wfc.loadSound("triangle.mp3")
 
     Text.loadFonts()
@@ -86,6 +86,7 @@ object Wfc {
   var stairs: TextureWrapper = _
   var minion: TextureWrapper = _
   var minionBed: TextureWrapper = _
+  var dust: TextureWrapper = _
 
   def mobile: Boolean = isMobile(Gdx.app.getType)
 

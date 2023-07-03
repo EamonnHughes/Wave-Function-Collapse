@@ -11,24 +11,14 @@ import org.eamonn.wfc.util.TextureWrapper
 import scala.util.Random
 
 class Game extends Scene {
-  def walkables = grid.filter(g => g.options.head != 0)
   var time = 0f
-
-  def reset(): Unit = {
-    grid = Array.fill(dimensions * dimensions)(
-      gridItem(collapsed = false, getAllTileNumbers(), isEntrance = false)
-    )
-    exclavesRemoved = false
-    minions = List.empty
-  }
-
   var minions: List[Minion] = List.empty
-
   var exclavesRemoved = false
-
   var grid: Array[gridItem] = Array.fill(dimensions * dimensions)(
     gridItem(collapsed = false, getAllTileNumbers())
   )
+
+  def walkables = grid.filter(g => g.options.head != 0)
 
   override def init(): InputAdapter = {
     new GameControl(this)
@@ -50,6 +40,14 @@ class Game extends Scene {
     None
   }
 
+  def reset(): Unit = {
+    grid = Array.fill(dimensions * dimensions)(
+      gridItem(collapsed = false, getAllTileNumbers(), isEntrance = false)
+    )
+    exclavesRemoved = false
+    minions = List.empty
+  }
+
   def removeExclave(): Unit = {
     var onlyRooms =
       grid.filter(item => item.collapsed && tiles(item.options.head).isRoom)
@@ -64,9 +62,61 @@ class Game extends Scene {
       }
 
     }
-    for(i <- 0 until 5) {
+    for (i <- 0 until 5) {
       minions = Minion(grid.indexOf(loc), this) :: minions
     }
+  }
+
+  //pick cell with least entropy
+  def collapseLeast(): Unit = {
+    if (grid.exists(_.collapsed == false)) {
+      val leastLength =
+        grid.filter(_.collapsed == false).map(_.options.length).min
+      val least = grid.filter(cell =>
+        cell.options.length == leastLength && !cell.collapsed
+      )
+
+      val picked = least(Random.nextInt(least.length))
+
+      var x = grid.indexOf(picked) % dimensions
+      var y = (grid.indexOf(picked) - x) / dimensions
+      var allowed = getAllowed(x, y)
+      if (allowed.isEmpty) {
+        grid = Array.fill(dimensions * dimensions)(
+          gridItem(collapsed = false, getAllTileNumbers())
+        )
+      } else {
+        picked.options = List(
+          allowed(Random.nextInt(allowed.length))
+        )
+        picked.collapsed = true
+
+        grid = generateNewGrid()
+      }
+    }
+  }
+
+  def generateNewGrid(): Array[gridItem] = {
+    var nextGrid: Array[gridItem] = grid.clone()
+    for (x <- 0 until dimensions) {
+      for (y <- 0 until dimensions) {
+        var index = x + y * dimensions
+        if (grid(index).collapsed) {
+          nextGrid(index) = grid(index)
+        } else {
+          var availOptions = getAllowed(x, y)
+          if (availOptions.nonEmpty) {
+            nextGrid(index).options = availOptions
+            if (availOptions.length == 1) nextGrid(index).collapsed = true
+          } else {
+            grid = Array.fill(dimensions * dimensions)(
+              gridItem(collapsed = false, getAllTileNumbers())
+            )
+          }
+        }
+      }
+    }
+    return nextGrid
   }
 
   def getAllowed(x: Int, y: Int): List[Int] = {
@@ -124,58 +174,6 @@ class Game extends Scene {
         availOptions.filter(avail => tiles(avail).up == "000000000")
     }
     availOptions
-  }
-
-  //pick cell with least entropy
-  def collapseLeast(): Unit = {
-    if (grid.exists(_.collapsed == false)) {
-      val leastLength =
-        grid.filter(_.collapsed == false).map(_.options.length).min
-      val least = grid.filter(cell =>
-        cell.options.length == leastLength && !cell.collapsed
-      )
-
-      val picked = least(Random.nextInt(least.length))
-
-      var x = grid.indexOf(picked) % dimensions
-      var y = (grid.indexOf(picked) - x) / dimensions
-      var allowed = getAllowed(x, y)
-      if (allowed.isEmpty) {
-        grid = Array.fill(dimensions * dimensions)(
-          gridItem(collapsed = false, getAllTileNumbers())
-        )
-      } else {
-        picked.options = List(
-          allowed(Random.nextInt(allowed.length))
-        )
-        picked.collapsed = true
-
-        grid = generateNewGrid()
-      }
-    }
-  }
-
-  def generateNewGrid(): Array[gridItem] = {
-    var nextGrid: Array[gridItem] = grid.clone()
-    for (x <- 0 until dimensions) {
-      for (y <- 0 until dimensions) {
-        var index = x + y * dimensions
-        if (grid(index).collapsed) {
-          nextGrid(index) = grid(index)
-        } else {
-          var availOptions = getAllowed(x, y)
-          if (availOptions.nonEmpty) {
-            nextGrid(index).options = availOptions
-            if (availOptions.length == 1) nextGrid(index).collapsed = true
-          } else {
-            grid = Array.fill(dimensions * dimensions)(
-              gridItem(collapsed = false, getAllTileNumbers())
-            )
-          }
-        }
-      }
-    }
-    return nextGrid
   }
 
   override def render(batch: PolygonSpriteBatch): Unit = {
@@ -242,7 +240,12 @@ class Game extends Scene {
         })
       }
     }
-    batch.setColor(0f, 0f, 0f, ((((Math.abs(time)/3))/4 - 0.25f) min 0.725f) max 0f)
+    batch.setColor(
+      0f,
+      0f,
+      0f,
+      ((((Math.abs(time) / 3)) / 4 - 0.25f) min 0.725f) max 0f
+    )
     batch.draw(square, 0f, 0f, Geometry.ScreenWidth, Geometry.ScreenHeight)
     batch.setColor(Color.WHITE)
   }

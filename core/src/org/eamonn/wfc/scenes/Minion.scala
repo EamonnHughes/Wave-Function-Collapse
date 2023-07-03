@@ -27,7 +27,7 @@ case class Minion(var location: Int, game: Game) {
     }
     if (location == destination && Math.abs(game.time) <= 8f) {
       destination = game.grid.indexOf(
-        game.grid.filter(g => g.options.head!= 0)(
+        game.grid.filter(g => !g.isEntrance && g.options.head!= 0 && !game.minions.exists(m => m.home == game.grid.indexOf(g)))(
           Random.nextInt(game.grid.count(g => g.options.head != 0))
         )
       )

@@ -44,7 +44,7 @@ class Game extends Scene {
     else if (!exclavesRemoved) {
       removeExclave()
       exclavesRemoved = true
-      if (grid.count(e => e.options.head != 0) <= 20) reset()
+      if (grid.count(e => tiles(e.options.head).isRoom) <= 12) reset()
     }
     minions.foreach(m => m.update(delta))
     None
@@ -64,9 +64,9 @@ class Game extends Scene {
       }
 
     }
-
-    minions = Minion(grid.indexOf(loc), this) :: Minion(grid.indexOf(loc), this) :: Minion(grid.indexOf(loc), this) :: minions
-
+    for(i <- 0 until 10) {
+      minions = Minion(grid.indexOf(loc), this) :: minions
+    }
   }
 
   def getAllowed(x: Int, y: Int): List[Int] = {

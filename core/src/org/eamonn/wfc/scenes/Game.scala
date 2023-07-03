@@ -64,7 +64,7 @@ class Game extends Scene {
       }
 
     }
-    for(i <- 0 until 10) {
+    for(i <- 0 until 5) {
       minions = Minion(grid.indexOf(loc), this) :: minions
     }
   }
@@ -199,8 +199,8 @@ class Game extends Scene {
             tiles(index).rot,
             0,
             0,
-            9,
-            9,
+            27,
+            27,
             false,
             false
           )

@@ -15,7 +15,8 @@ class GameControl(game: Game) extends InputAdapter {
   }
 
   override def mouseMoved(screenX: Int, screenY: Int): Boolean = {
-
+    game.mouseX = screenX
+    game.mouseY = Geometry.ScreenHeight - screenY
     true
   }
 

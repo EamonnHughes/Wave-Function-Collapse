@@ -11,6 +11,8 @@ import org.eamonn.wfc.util.TextureWrapper
 import scala.util.Random
 
 class Game extends Scene {
+  var mouseX = 0f
+  var mouseY = 0f
   var time = 0f
   var minions: List[Minion] = List.empty
   var fights: List[Fight] = List.empty
@@ -279,6 +281,10 @@ class Game extends Scene {
     )
     batch.draw(square, 0f, 0f, Geometry.ScreenWidth, Geometry.ScreenHeight)
     batch.setColor(Color.WHITE)
+    for(y <- 0 to (dimensions -  mouseY/screenUnit).toInt){
+      batch.draw(Wfc.lightMid, ((mouseX/screenUnit).toInt)*screenUnit, (dimensions-y) * screenUnit, screenUnit, screenUnit)
+    }
+    batch.draw(Wfc.lightEnd, (mouseX/screenUnit).toInt*screenUnit, (mouseY/screenUnit).toInt * screenUnit, screenUnit, screenUnit)
   }
 
 }
